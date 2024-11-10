@@ -8,10 +8,10 @@ you can also change the code and it would sync with the code inside the containe
 
 Install docker in order to run the project
 
-Next, run the following command to run the container
+Next, run the following command to run the container (soon will add mmn12 and mmn13)
 
 ```bash
-docker compose run --rm xv6
+docker compose run --rm mmn11
 ```
 
 You should now be connected to the container
