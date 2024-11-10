@@ -15,9 +15,11 @@ RUN apt-get install -y \
     make \
     expect
 
-ADD ./xv6-public /xv6-public
+ARG PROJECT_NAME
 
-WORKDIR /xv6-public
+ADD ./${PROJECT_NAME} /${PROJECT_NAME}
+
+WORKDIR /${PROJECT_NAME}
 
 ENV TOOLPREFIX=x86_64-linux-gnu-
 

@@ -1,7 +1,28 @@
 services:
-  xv6:
+  mmn11:
     build:
+      context: .
       dockerfile: ./Dockerfile
-    working_dir: /xv6-public
+      args:
+        PROJECT_NAME: mmn11
+    working_dir: /mmn11
     volumes:
-      - ./xv6-public:/xv6-public
+      - ./mmn11:/mmn11
+  # mmn12:
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile
+  #     args:
+  #       PROJECT_NAME: mmn12
+  #   working_dir: /mmn12
+  #   volumes:
+  #     - ./mmn12:/mmn12
+  # mmn13:
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile
+  #     args:
+  #       PROJECT_NAME: mmn13
+  #   working_dir: /mmn13
+  #   volumes:
+  #     - ./mmn13:/mmn13
