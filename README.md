@@ -1,43 +1,32 @@
-WARNING: This repo still uses the (now deprecated) x86 version of xv6. It was developed to make playing around with the code a bit easier for Mac users, but the riscv version of xv6 can be run much more easily on Mac now than the x86 version.
+# openu-xv6-docker
 
-
-# xv6-docker
-Follow along with the MIT Operating Systems course (https://pdos.csail.mit.edu/6.828/2017/) for learning more about kernel and os development. This repo contains a dockerized environment for developing and debugging to xv6 kernel, with a few utilities to make things easier to get started.
+This repo is a fork of xv6-docker that should help students run xv6 with ease,  
+it includes all the changes made by the open university for mmn11
 
 ## Getting Started
 
-I've created a fork of the os source and linked as a submodule. To grab the source, update this dependency: 
-```bash
-git submodule update --init --recursive
-```
-The next step is to build the docker image. This will pull the required dependencies for compiling the xv6 source, grab/build the patched version of qemu for running the kernel and copy the linked source files into the container. Installing all the dependencies and compiling qemu takes a while, but it only has to be done once. 
+Install docker in order to run the project
+
+Next, run the following command to run the container
 
 ```bash
-docker build -t xv6 .
+docker compose run --rm xv6
 ```
 
-There are a few ways to run the kernel, depending on how you want to edit the source, run qemu, etc. 
+You should now be connected to the container
 
-To just run the image, without mounting any of the source for local editing, do the following:
+split the terminal using tmux, that will help you later to shutdown xv6
 
 ```bash
-docker run --rm -it xv6
+tmux
 ```
 
-This will launch a shell inside the container connected to your terminal. Note that any changes you make to the source code will not be persisted across container re-starts. To edit the files locally, run the following:
+And then `CTRL+B "` or `CTRL+B %` to split the terminal (swap between them using `CTRL+B O` )
+
+In one pane run the os using
 
 ```bash
-docker run --rm -it -v $PWD/xv6-public:/xv6-public xv6
+make qemu-nox
 ```
 
-You'll notice from the Dockerfile that tmux was added as an extra utility. This facilitates launching both qemu and gdb from seperate windows/panes for quickly inspecting instructions as the kernel is running.
-
-
-## TODO
-- Add support for qemu graphical display (low priority)
-- Remove tmux from the container and run locally, connected to the container for persisting sessions
-
-
-
-
-
+And when you want to shut it down, swap to the other pane and search the process id using `ps -a`, then kill it using `kill ...`
