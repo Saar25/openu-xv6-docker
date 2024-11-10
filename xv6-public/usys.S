@@ -1,6 +1,7 @@
 #include "syscall.h"
 #include "traps.h"
 
+// All "standard" SYSCALLS are added by this:
 #define SYSCALL(name) \
   .globl name; \
   name: \
@@ -8,7 +9,20 @@
     int $T_SYSCALL; \
     ret
 
-SYSCALL(fork)
+// !!!! Adding "new" "SYSCALLfork(fork)" instead of SYSCALL(fork) 
+//  without changing syscall.h !!! 1 is SYSCALL number, look in syscall.c
+#define SYSCALLFORK(name) \
+  .globl name; \
+  name: \
+    movl $1, %eax; \
+    int $T_SYSCALL; \
+    ret
+
+// You need to add your new SYSCALL by the same way(here is a good place)
+
+
+SYSCALLFORK(fork) //instead of SYSCALL(fork) !!!
+//SYSCALL(fork)
 SYSCALL(exit)
 SYSCALL(wait)
 SYSCALL(pipe)

@@ -105,7 +105,8 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 
 static int (*syscalls[])(void) = {
-[SYS_fork]    sys_fork,
+// Adding "new" "SYSCALLfork(fork)" without changing syscall.h
+[1]    sys_fork, //originally [SYS_fork]    sys_fork, 1 instead of SYS_fork
 [SYS_exit]    sys_exit,
 [SYS_wait]    sys_wait,
 [SYS_pipe]    sys_pipe,
