@@ -15,4 +15,3 @@ kernel
 kernelmemfs
 mkfs
 .gdbinit
-internal_fs_*
