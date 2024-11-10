@@ -1,0 +1,7 @@
+services:
+  xv6:
+    build:
+      dockerfile: ./Dockerfile
+    working_dir: /xv6-public
+    volumes:
+      - ./xv6-public:/xv6-public
