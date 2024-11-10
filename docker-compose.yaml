@@ -8,15 +8,15 @@ services:
     working_dir: /mmn11
     volumes:
       - ./mmn11:/mmn11
-  # mmn12:
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile
-  #     args:
-  #       PROJECT_NAME: mmn12
-  #   working_dir: /mmn12
-  #   volumes:
-  #     - ./mmn12:/mmn12
+  mmn12:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        PROJECT_NAME: mmn12
+    working_dir: /mmn12
+    volumes:
+      - ./mmn12:/mmn12
   # mmn13:
   #   build:
   #     context: .
