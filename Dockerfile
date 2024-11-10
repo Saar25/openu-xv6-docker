@@ -6,13 +6,14 @@ RUN apt-get -qq update && \
     dpkg-reconfigure -f noninteractive tzdata
 
 RUN apt-get install -y \
-                    build-essential \
-                    gdb \
-                    gcc-multilib-x86-64-linux-gnu \
-                    tmux \
-                    qemu-system-x86 \
-                    gawk \
-                    expect
+    build-essential \
+    gdb \
+    gcc-multilib \
+    tmux \
+    qemu-system \
+    gawk \
+    make \
+    expect
 
 ADD ./xv6-public /xv6-public
 
