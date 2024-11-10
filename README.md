@@ -30,3 +30,15 @@ make qemu-nox
 ```
 
 And when you want to shut it down, swap to the other pane and search the process id using `ps -a`, then kill it using `kill ...`
+
+You can also run the openu solution using
+
+```bash
+make qemuss-nox
+```
+
+and gdb using
+
+```bash
+make qemu-nox-gdb
+```
