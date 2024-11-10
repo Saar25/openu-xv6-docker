@@ -13,7 +13,8 @@ RUN apt-get install -y \
     qemu-system \
     gawk \
     make \
-    expect
+    expect \
+    && ( apt-get install -y gcc-multilib || echo "Warning: not installing gcc-multilib" )
 
 ARG PROJECT_NAME
 
