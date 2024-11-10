@@ -1,6 +1,5 @@
 MAKEFILE_DIRECTORY := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-MMNFILES = proc.o syscall.o sysproc.o usys.o
 OBJS = \
 	bio.o\
 	console.o\
@@ -92,28 +91,38 @@ AS = $(TOOLPREFIX)gas
 LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
-debug ?= false
+
+########## CFLAGS ##########
+CFLAGS = -static -MD -m32 -mno-sse -gstabs -std=gnu99 -Wall -Werror -Wstack-usage=4096 \
+	-fno-pic -fno-builtin -fno-strict-aliasing -fno-omit-frame-pointer $(OFLAGS)
+
 #x86
 HOST_CPU_TSC_FREQ := $(shell cat /proc/cpuinfo | grep -i "cpu mhz" | head -n 1 | rev | cut -d ' ' -f 1 | rev | cut -d '.' -f 1)*1000
 #ARM
 #HOST_CPU_TSC_FREQ := $(shell cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq )
-ifeq ($(debug), true)
-CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -Og -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -std=gnu99 -mno-sse -DXV6_TSC_FREQUENCY=$(HOST_CPU_TSC_FREQ)
+CFLAGS += -DXV6_TSC_FREQUENCY=$(HOST_CPU_TSC_FREQ)
+
+ifeq ($(pause_debug), true)
+CFLAGS += -DXV6_WAIT_FOR_DEBUGGER=1
 else
-CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -m32 -Werror -fno-omit-frame-pointer -std=gnu99 -mno-sse -DXV6_TSC_FREQUENCY=$(HOST_CPU_TSC_FREQ)
+CFLAGS += -DXV6_WAIT_FOR_DEBUGGER=0
 endif
+
+OFLAGS = -O2
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
+############################
+
 ASFLAGS = -m32 -gdwarf-2 -Wa,-divide
 # FreeBSD ld wants ``elf_i386_fbsd''
 LDFLAGS += -m $(shell $(LD) -V | grep elf_i386 2>/dev/null | head -n 1)
 
 xv6.img: bootblock kernel fs.img | windows_debugging
-	dd if=/dev/zero of=xv6.img count=500
+	dd if=/dev/zero of=xv6.img count=10000
 	dd if=bootblock of=xv6.img conv=notrunc
 	dd if=kernel of=xv6.img seek=1 conv=notrunc
 
 xv6memfs.img: bootblock kernelmemfs
-	dd if=/dev/zero of=xv6memfs.img count=1000
+	dd if=/dev/zero of=xv6memfs.img count=10000
 	dd if=bootblock of=xv6memfs.img conv=notrunc
 	dd if=kernelmemfs of=xv6memfs.img seek=1 conv=notrunc
 
@@ -134,12 +143,10 @@ entryother: entryother.S
 initcode: initcode.S
 	$(CC) $(CFLAGS) -nostdinc -I. -c initcode.S
 	$(LD) $(LDFLAGS) -N -e start -Ttext 0 -o initcode.out initcode.o
-	$(OBJCOPY) -S -O binary initcode.out initcode
+	$(OBJCOPY) -S -O binary -j .text initcode.out initcode
 	$(OBJDUMP) -S initcode.o > initcode.asm
 
-MMN12_OBJ = proc.o sysproc.o syscall.o usys.o console.o
-
-kernel: entry.o entryother initcode kernel.ld $(MMN12_OBJ) # $(OBJS) # $(MMN12_OBJ)
+kernel: entry.o entryother initcode kernel.ld $(OBJS)
 	$(LD) $(LDFLAGS) -T kernel.ld -o kernel entry.o $(OBJS) -b binary initcode entryother
 	$(OBJDUMP) -S kernel > kernel.asm
 	$(OBJDUMP) -t kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > kernel.sym
@@ -166,7 +173,6 @@ ULIB = ulib.o usys.o printf.o umalloc.o tty.o
 
 _%: %.o $(ULIB)
 	$(LD) $(LDFLAGS) -T userspace.ld -N -e main -Ttext 0 -o $@ $^
-	# $(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
 	$(OBJDUMP) -S $@ > $*.asm
 	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $*.sym
 
@@ -213,7 +219,7 @@ UPROGS=\
         _ctrl_grp \
         _demo_pid_ns \
         _demo_mount_ns \
-        _ioctltests \
+        _ioctltests
 
 INTERNAL_DEV=\
 	internal_fs_a\
@@ -224,16 +230,16 @@ internal_fs_%: mkfs
 	dd if=/dev/zero of=$@ count=80
 	./mkfs $@ 1
 
-fs.img: mkfs README $(INTERNAL_DEV) _init #$(UPROGS) 
+fs.img: mkfs README $(INTERNAL_DEV)  $(UPROGS) _pouch # $(UPROGS)
 	./mkfs fs.img 0 README $(UPROGS) $(INTERNAL_DEV)
 
 -include *.d
 
-clean:
-	rm -rf mkfs bootblock.o fs.img xv6.img $(MMNFILES) kernel
+#clean:
+#	rm -rf mkfs bootblock.o fs.img xv6.img pouch.asm pouch.d pouch.o pouch.sym
 
-#clean: windows_debugging_clean
-#	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
+clean: windows_debugging_clean
+	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
 	*.o *.d *.asm *.sym vectors.S bootblock entryother \
 	initcode initcode.out kernel xv6.img fs.img kernelmemfs mkfs \
 	.gdbinit \
@@ -267,11 +273,10 @@ CPUS := 2
 endif
 QEMUOPTS = -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp $(CPUS) -m 512 $(QEMUEXTRA)
 
-qemu: fs.img xv6.img
-	$(QEMU) -serial mon:stdio $(QEMUOPTS)
+gdb: OFLAGS = -Og -ggdb
+gdb: fs.img xv6.img
 
-qemuss: 
-	cp ss/* ./ 
+qemu: fs.img xv6.img
 	$(QEMU) -serial mon:stdio $(QEMUOPTS)
 
 qemu-memfs: xv6memfs.img
@@ -283,11 +288,11 @@ qemu-nox: fs.img xv6.img
 .gdbinit: .gdbinit.tmpl
 	sed "s/localhost:1234/localhost:$(GDBPORT)/" < $^ > $@
 
-qemu-gdb: fs.img xv6.img .gdbinit
+qemu-gdb: gdb .gdbinit
 	@echo "*** Now run 'gdb'." 1>&2
 	$(QEMU) -serial mon:stdio $(QEMUOPTS) -S $(QEMUGDB)
 
-qemu-nox-gdb: fs.img xv6.img .gdbinit
+qemu-nox-gdb: gdb .gdbinit
 	@echo "*** Now run 'gdb'." 1>&2
 	$(QEMU) -nographic $(QEMUOPTS) -S $(QEMUGDB)
 
@@ -300,7 +305,7 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
         ln.c ls.c mkdir.c mounttest.c rm.c stressfs.c usertests.c pidns_tests.c wc.c zombie.c\
-        printf.c umalloc.c mount.c umount.c timer.c cpu.c cgroupstests.c ioctltests.c \
+        printf.c umalloc.c mount.c umount.c timer.c cpu.c cgroupstests.c ioctltests.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 
