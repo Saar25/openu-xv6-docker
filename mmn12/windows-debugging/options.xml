@@ -1,7 +1,7 @@
 <PipeLaunchOptions xmlns="http://schemas.microsoft.com/vstudio/MDDDebuggerOptions/2014"
   PipePath="C:\windows\sysnative\bash.exe"
   PipeCommandArguments="-c"
-  PipeArguments="-c 'gdb --interpreter=mi -command {{project_root}}/windows-debugging/gdbcommand'"
+  PipeArguments="-c 'gdb --interpreter=mi -command /mmn12/windows-debugging/gdbcommand'"
   MiMode="gdb"
   ExePath="/bin/bash"
   TargetArchitecture="x86"
