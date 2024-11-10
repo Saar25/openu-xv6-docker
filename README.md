@@ -1,7 +1,8 @@
 # openu-xv6-docker
 
 This repo is a fork of xv6-docker that should help students run xv6 with ease,  
-it includes all the changes made by the open university for mmn11
+it includes all the changes made by the open university for mmn11  
+you can also change the code and it would sync with the code inside the container
 
 ## Getting Started
 
