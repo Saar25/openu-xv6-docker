@@ -20,7 +20,8 @@ You should now be connected to the container, next run xv6 using qemu
 make qemu-nox
 ```
 
-When you want to shut down the program, press `Ctrl+A x`, that will thell qemu to exit
+When you want to shut down the program, press `Ctrl+A x`, that will tell qemu to exit  
+to close the container press `Ctrl+D`
 
 You can run the openu solution using
 
