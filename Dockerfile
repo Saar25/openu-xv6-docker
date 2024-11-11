@@ -1,3 +1,5 @@
+# copied with changes from https://github.com/kmontg/xv6-docker
+
 FROM ubuntu:18.04
 
 RUN apt-get -qq update && \
