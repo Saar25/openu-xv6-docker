@@ -14,25 +14,15 @@ Next, run the following command to run the container (soon will add mmn12 and mm
 docker compose run --rm mmn11
 ```
 
-You should now be connected to the container
-
-split the terminal using tmux, that will help you later to shutdown xv6
-
-```bash
-tmux
-```
-
-And then `CTRL+B "` or `CTRL+B %` to split the terminal (swap between them using `CTRL+B O` )
-
-In one pane run the os using
+You should now be connected to the container, next run xv6 using qemu
 
 ```bash
 make qemu-nox
 ```
 
-And when you want to shut it down, swap to the other pane and search the process id using `ps -a`, then kill it using `kill ...`
+When you want to shut down the program, press `Ctrl+A x`, that will thell qemu to exit
 
-You can also run the openu solution using
+You can run the openu solution using
 
 ```bash
 make qemuss-nox
