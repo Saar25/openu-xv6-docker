@@ -10,7 +10,6 @@ RUN apt-get -qq update && \
 RUN apt-get install -y \
     build-essential \
     gdb \
-    gcc-multilib \
     tmux \
     qemu-system \
     gawk \
