@@ -16,3 +16,8 @@ kernelmemfs
 mkfs
 .gdbinit
 internal_fs_*
+
+proc.o
+syscall.o
+sysproc.o
+usys.o
