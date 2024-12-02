@@ -21,3 +21,11 @@ proc.o
 syscall.o
 sysproc.o
 usys.o
+_init
+console.o
+init.o
+printf.o
+ps.o
+tty.o
+ulib.o
+umalloc.o
