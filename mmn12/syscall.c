@@ -1,3 +1,12 @@
+/**
+ * syscall.c
+ * 
+ * This file contains the data structure of the syscalls, allowing user space programs to interact with the kernel
+ * 
+ * Name: Saar Tako
+ * tz:   212434211
+ */
+
 #include "types.h"
 #include "defs.h"
 #include "param.h"
@@ -114,6 +123,7 @@ extern int sys_getppid(void);
 extern int sys_getcpu(void);
 extern int sys_getmem(void);
 extern int sys_kmemtest(void);
+extern int sys_cps111(void); // maman addition
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -148,6 +158,7 @@ static int (*syscalls[])(void) = {
 [SYS_getcpu] sys_getcpu,
 [SYS_getmem] sys_getmem,
 [SYS_kmemtest] sys_kmemtest,
+[SYS_cps111] sys_cps111,
 };
 
 void

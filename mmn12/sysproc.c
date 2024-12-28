@@ -253,3 +253,9 @@ int
 sys_kmemtest(void) {
   return kmemtest();
 }
+
+int
+sys_cps111(void)
+{
+    return cps111();
+} 

@@ -1,3 +1,12 @@
+/**
+ * usys.S
+ * 
+ * This file contains the assemble code that invokes the syscall, acting as a bridge between user space and kernel
+ * 
+ * Name: Saar Tako
+ * tz:   212434211
+ */
+
 #include "syscall.h"
 #include "traps.h"
 
@@ -40,3 +49,4 @@ SYSCALL(getppid)
 SYSCALL(getcpu)
 SYSCALL(getmem)
 SYSCALL(kmemtest)
+SYSCALL(cps111)

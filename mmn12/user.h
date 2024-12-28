@@ -37,6 +37,7 @@ int getppid(void);
 int getcpu(void);
 int getmem(void);
 int kmemtest(void);
+int cps111(void);
 
 int mount(const char*, const char*, const char *);
 int umount(const char*);

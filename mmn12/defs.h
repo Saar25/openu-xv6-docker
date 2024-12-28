@@ -181,6 +181,7 @@ int             wait(int*);
 void            wakeup(void*);
 void            yield(void);
 int             cgroup_move_proc(struct cgroup * cgroup, int pid);
+int             cps111();
 
 // swtch.S
 void            swtch(struct context**, struct context*);

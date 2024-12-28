@@ -1,6 +1,6 @@
 MAKEFILE_DIRECTORY := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-MMNFILES = proc.o syscall.o sysproc.o usys.o
+MMNFILES = proc.o syscall.o sysproc.o usys.o ps.o
 OBJS = \
 	bio.o\
 	console.o\
@@ -107,7 +107,7 @@ ASFLAGS = -m32 -gdwarf-2 -Wa,-divide
 # FreeBSD ld wants ``elf_i386_fbsd''
 LDFLAGS += -m $(shell $(LD) -V | grep elf_i386 2>/dev/null | head -n 1)
 
-xv6.img: bootblock kernel fs.img | windows_debugging
+xv6.img: bootblock kernel fs.img
 	dd if=/dev/zero of=xv6.img count=500
 	dd if=bootblock of=xv6.img conv=notrunc
 	dd if=kernel of=xv6.img seek=1 conv=notrunc
@@ -214,6 +214,7 @@ UPROGS=\
         _demo_pid_ns \
         _demo_mount_ns \
         _ioctltests \
+        _ps\
 
 INTERNAL_DEV=\
 	internal_fs_a\
@@ -224,7 +225,7 @@ internal_fs_%: mkfs
 	dd if=/dev/zero of=$@ count=80
 	./mkfs $@ 1
 
-fs.img: mkfs README $(INTERNAL_DEV) _init #$(UPROGS) 
+fs.img: mkfs README $(INTERNAL_DEV) _init _ps #$(UPROGS) 
 	./mkfs fs.img 0 README $(UPROGS) $(INTERNAL_DEV)
 
 -include *.d
@@ -280,6 +281,10 @@ qemu-memfs: xv6memfs.img
 qemu-nox: fs.img xv6.img
 	$(QEMU) -nographic $(QEMUOPTS)
 
+qemuss-nox:
+	cp ss/* ./ 
+	$(QEMU) -nographic $(QEMUOPTS)
+
 .gdbinit: .gdbinit.tmpl
 	sed "s/localhost:1234/localhost:$(GDBPORT)/" < $^ > $@
 
@@ -300,7 +305,7 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
         ln.c ls.c mkdir.c mounttest.c rm.c stressfs.c usertests.c pidns_tests.c wc.c zombie.c\
-        printf.c umalloc.c mount.c umount.c timer.c cpu.c cgroupstests.c ioctltests.c \
+        printf.c umalloc.c mount.c umount.c timer.c cpu.c cgroupstests.c ioctltests.c ps.c \
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 
