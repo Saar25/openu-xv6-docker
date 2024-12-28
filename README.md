@@ -8,7 +8,7 @@ you can also change the code and it would sync with the code inside the containe
 
 Install docker in order to run the project
 
-Next, run the following command to run the container (you can change mmn11 to mmn12 to mmn13)
+Next, run the following command to run the container (you can change mmn11 to mmn12 or mmn13)
 
 ```bash
 docker compose run --rm mmn11
